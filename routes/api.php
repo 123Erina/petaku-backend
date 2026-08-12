@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\RoadLayerController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\GuestMapController;
+use App\Http\Controllers\Api\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,8 +63,7 @@ Route::get('/places', [PlaceController::class, 'index']);
 Route::get('/places/{id}', [PlaceController::class, 'show']);
 Route::get('/places/category/{category}', [PlaceController::class, 'getPlaces']);
 
-// Categories
-Route::get('/categories', [CategoryController::class, 'index']);
+
 
 // OPD
 Route::get('/home/opds', [OpdController::class, 'index']);
@@ -89,8 +89,33 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
 
     Route::apiResource('opds', OpdController::class)->except(['index']);
-
+    Route::get('/admin/places', [PlaceController::class, 'adminIndex']);
     Route::post('/places', [PlaceController::class, 'store']);
     Route::put('/places/{id}', [PlaceController::class, 'update']);
     Route::delete('/places/{id}', [PlaceController::class, 'destroy']);
+
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
+
+    Route::apiResource('categories', CategoryController::class);
+
+    Route::apiResource('reports', ReportController::class)->except(['index', 'show']);
+    Route::get('/reports', [ReportController::class, 'index']);
+    Route::get('/reports/{id}', [ReportController::class, 'show']);
+
+    // Fiber Optik (admin)
+    Route::apiResource('fiber-optiks', FiberOptikController::class)->except(['index', 'show']);
+    Route::get('/fiber-optiks', [FiberOptikController::class, 'index']);
+    Route::get('/fiber-optiks/{id}', [FiberOptikController::class, 'show']);
+
+    // Basemap (admin)
+    Route::apiResource('basemaps', BasemapController::class)->except(['index', 'show']);
+    Route::get('/basemaps', [BasemapController::class, 'index']);
+    Route::get('/basemaps/{id}', [BasemapController::class, 'show']);
+
+    // Google Business (admin)
+    Route::apiResource('google-businesses', GoogleBusinessController::class)->except(['index', 'show']);
+    Route::get('/google-businesses', [GoogleBusinessController::class, 'index']);
+    Route::get('/google-businesses/{id}', [GoogleBusinessController::class, 'show']);
 });

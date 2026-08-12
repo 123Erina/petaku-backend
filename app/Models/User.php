@@ -10,21 +10,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-public function opd()
-{
-    return $this->belongsTo(Opd::class);
-}
+
+    public function opd()
+    {
+        return $this->belongsTo(Opd::class);
+    }
+
     protected $fillable = [
         'name',
         'email',
         'password',
         'role',
-        'opd_id'
+        'opd_id',
+        'status'
     ];
 
     protected $hidden = [
         'password',
         'remember_token'
     ];
-
 }

@@ -9,7 +9,7 @@ class Place extends Model
 {
     protected $fillable = [
         'category_id',
-        'old_id',
+        'opd_id',
         'nama',
         'alamat',
         'latitude',
@@ -20,18 +20,25 @@ class Place extends Model
         'telepon',
         'status'
     ];
-     protected $appends = ['gambar_url'];
+
+    protected $appends = ['gambar_url'];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
-    public function getGambarUrlAttribute()
-{
-    if (!$this->gambar) {
-        return null;
+
+    public function opd(): BelongsTo
+    {
+        return $this->belongsTo(Opd::class);
     }
 
-    return asset('storage/'.$this->gambar);
-}
+    public function getGambarUrlAttribute()
+    {
+        if (!$this->gambar) {
+            return null;
+        }
+
+        return asset('storage/' . $this->gambar);
+    }
 }
