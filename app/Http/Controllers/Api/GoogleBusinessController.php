@@ -48,45 +48,34 @@ class GoogleBusinessController extends Controller
     }
 
     /**
-     * GET /api/google-business/{kategori}?page=N (public, dipakai peta)
+     * GET /api/google-business/{kategori} (public, dipakai peta)
      *
-     * Dipaginasi 100 data per halaman biar tiap request ringan
-     * (kategori Masjid sendiri ada 300+ data kalau ditarik sekaligus).
-     * Frontend (MapPage.vue) otomatis loop narik tiap halaman sampai habis.
+     * DIUBAH: tidak dipaginasi lagi. Endpoint ini dipakai untuk menampilkan
+     * semua marker satu kategori sekaligus di peta, jadi harus return
+     * semua data dalam satu response (array), bukan dibagi per halaman.
      */
     public function getBusiness(Request $request, $kategori)
     {
-        $perPage = 100;
+        $data = GoogleBusiness::where('kategori', $kategori)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'nama' => $item->nama,
+                    'alamat' => $item->alamat,
+                    'lat' => $item->latitude,
+                    'lng' => $item->longitude,
+                    'range_harga' => $item->range_harga,
+                    'nomor_telp' => $item->nomor_telp,
+                    'kategori' => $item->kategori,
+                ];
+            });
 
-        $paginated = GoogleBusiness::where('kategori', $kategori)
-            ->paginate($perPage);
-
-        $data = collect($paginated->items())->map(function ($item) {
-            return [
-                'nama' => $item->nama,
-                'alamat' => $item->alamat,
-                'lat' => $item->latitude,
-                'lng' => $item->longitude,
-                'range_harga' => $item->range_harga,
-                'nomor_telp' => $item->nomor_telp,
-                'kategori' => $item->kategori,
-            ];
-        });
-
-        return response()->json([
-            'data' => $data,
-            'current_page' => $paginated->currentPage(),
-            'last_page' => $paginated->lastPage(),
-            'total' => $paginated->total(),
-        ]);
+        return response()->json($data);
     }
 
     /**
-     * GET /api/google-businesses (admin, baru)
+     * GET /api/google-businesses (admin, baru) — TIDAK DIUBAH
      * Query param opsional: ?kategori=Kuliner&page=N
-     *
-     * Dipaginasi 100 data per halaman biar tabel admin nggak load ribuan
-     * data sekaligus.
      */
     public function index(Request $request): JsonResponse
     {
@@ -116,7 +105,7 @@ class GoogleBusinessController extends Controller
     }
 
     /**
-     * GET /api/google-businesses/{id} (admin, baru)
+     * GET /api/google-businesses/{id} (admin, baru) — TIDAK DIUBAH
      */
     public function show(int $id): JsonResponse
     {
@@ -136,7 +125,7 @@ class GoogleBusinessController extends Controller
     }
 
     /**
-     * POST /api/google-businesses (admin, baru)
+     * POST /api/google-businesses (admin, baru) — TIDAK DIUBAH
      */
     public function store(Request $request): JsonResponse
     {
@@ -168,7 +157,7 @@ class GoogleBusinessController extends Controller
     }
 
     /**
-     * PUT /api/google-businesses/{id} (admin, baru)
+     * PUT /api/google-businesses/{id} (admin, baru) — TIDAK DIUBAH
      */
     public function update(Request $request, int $id): JsonResponse
     {
@@ -209,7 +198,7 @@ class GoogleBusinessController extends Controller
     }
 
     /**
-     * DELETE /api/google-businesses/{id} (admin, baru)
+     * DELETE /api/google-businesses/{id} (admin, baru) — TIDAK DIUBAH
      */
     public function destroy(int $id): JsonResponse
     {
